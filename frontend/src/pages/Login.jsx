@@ -35,6 +35,10 @@ export default function Login() {
 
     return (
         <div className="auth-container">
+            <div className="auth-brand">
+                <span className="brand-mark" aria-hidden="true">F</span>
+                Felicity
+            </div>
             <div className="auth-card glass-card">
                 <h1>Welcome Back</h1>
                 <p className="subtitle">Sign in to your account</p>

@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const navConfig = {
@@ -38,14 +38,18 @@ export default function Navbar() {
     return (
         <nav className="navbar">
             <div className="navbar-inner">
-                <span className="navbar-brand">Felicity</span>
+                <Link to={links[0]?.path || '/'} className="navbar-brand">
+                    <span className="brand-mark" aria-hidden="true">F</span>
+                    Felicity
+                    {role && <span className="navbar-role">{role}</span>}
+                </Link>
                 <div className="navbar-links">
                     {links.map((link) => (
                         <NavLink key={link.path} to={link.path}>
                             {link.label}
                         </NavLink>
                     ))}
-                    <button onClick={handleLogout}>Logout</button>
+                    <button className="navbar-logout" onClick={handleLogout}>Log out</button>
                 </div>
             </div>
         </nav>

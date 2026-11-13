@@ -53,6 +53,10 @@ export default function Register() {
 
     return (
         <div className="auth-container">
+            <div className="auth-brand">
+                <span className="brand-mark" aria-hidden="true">F</span>
+                Felicity
+            </div>
             <div className="auth-card glass-card" style={{ maxWidth: 520 }}>
                 <h1>Create Account</h1>
                 <p className="subtitle">Join Felicity as a participant</p>

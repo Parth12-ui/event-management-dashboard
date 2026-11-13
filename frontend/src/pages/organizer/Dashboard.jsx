@@ -55,7 +55,7 @@ export default function Dashboard() {
                     <div className="stat-label">Total Registrations</div>
                 </div>
                 <div className="glass-card stat-card">
-                    <div className="stat-value">₹{totalRevenue}</div>
+                    <div className="stat-value">₹{totalRevenue.toLocaleString('en-IN')}</div>
                     <div className="stat-label">Total Revenue</div>
                 </div>
             </div>

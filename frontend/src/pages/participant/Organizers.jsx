@@ -48,10 +48,10 @@ export default function Organizers() {
                     <p>No organizers found</p>
                 </div>
             ) : (
-                <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                <div className="card-grid">
                     {organizers.map((org) => (
-                        <div key={org._id} className="glass-card fade-in">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                        <div key={org._id} className="glass-card fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
+                            <div className="page-header-row" style={{ alignItems: 'center', marginBottom: '0.9rem' }}>
                                 <span className="badge badge-purple">{categoryLabels[org.category] || org.category}</span>
                                 <button
                                     className={`btn btn-sm ${followedIds.includes(org._id) ? 'btn-primary' : 'btn-secondary'}`}
@@ -61,15 +61,16 @@ export default function Organizers() {
                                 </button>
                             </div>
 
-                            <Link to={`/organizers/${org._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                <h3 style={{ fontSize: 'var(--font-lg)', fontWeight: 700, marginBottom: '0.5rem' }}>{org.name}</h3>
-                                <p style={{ fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                            <Link to={`/organizers/${org._id}`} className="event-card" style={{ height: 'auto' }}>
+                                <h3>{org.name}</h3>
+                                <p className="event-card-desc" style={{ marginBottom: 0 }}>
                                     {org.description || 'No description'}
                                 </p>
                             </Link>
 
+                            <div style={{ flex: 1, minHeight: '0.75rem' }} />
                             {org.contactEmail && (
-                                <div style={{ marginTop: '0.75rem', fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>
+                                <div className="event-card-meta" style={{ marginTop: 'auto', paddingTop: '0.75rem' }}>
                                     📧 {org.contactEmail}
                                 </div>
                             )}

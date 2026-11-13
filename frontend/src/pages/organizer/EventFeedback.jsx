@@ -22,67 +22,75 @@ export default function EventFeedback() {
 
     const { stats, feedbacks } = data;
 
+    const stars = (n) => (
+        <span className="stars" aria-label={`${n} out of 5`}>
+            {'★'.repeat(n)}<span className="off">{'★'.repeat(5 - n)}</span>
+        </span>
+    );
+
     return (
         <div className="page-container">
-            <h1 className="page-title">Event Feedback</h1>
+            <div className="page-header">
+                <h1>Event Feedback</h1>
+                <p>What participants said — click a bar to filter by rating</p>
+            </div>
 
             {/* Aggregate Stats */}
-            <div className="glass-card" style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
-                    <div style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--accent)' }}>
-                            {stats.avgRating}
-                        </div>
-                        <div style={{ fontSize: '1.5rem' }}>
-                            {'★'.repeat(Math.round(stats.avgRating))}{'☆'.repeat(5 - Math.round(stats.avgRating))}
-                        </div>
-                        <div style={{ opacity: 0.6, marginTop: '0.25rem' }}>{stats.totalCount} reviews</div>
+            <div className="glass-card mb-page">
+                <div className="rating-summary">
+                    <div className="rating-big">
+                        <div className="value">{stats.avgRating}</div>
+                        <div style={{ fontSize: '1.25rem', margin: '0.35rem 0' }}>{stars(Math.round(stats.avgRating))}</div>
+                        <div className="text-xs text-muted">{stats.totalCount} review{stats.totalCount === 1 ? '' : 's'}</div>
                     </div>
-                    <div style={{ flex: 1, minWidth: '200px' }}>
+                    <div className="rating-bars">
                         {[5, 4, 3, 2, 1].map((star) => {
                             const count = stats.breakdown[star] || 0;
                             const pct = stats.totalCount > 0 ? (count / stats.totalCount) * 100 : 0;
                             return (
-                                <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem', cursor: 'pointer' }}
+                                <button key={star} type="button"
+                                    className={`rating-bar ${filter === String(star) ? 'active' : ''}`}
                                     onClick={() => setFilter(filter === String(star) ? '' : String(star))}
                                 >
-                                    <span style={{ width: '2rem', textAlign: 'right', fontSize: '0.85rem' }}>{star}★</span>
-                                    <div style={{ flex: 1, height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
-                                        <div style={{ width: `${pct}%`, height: '100%', background: star >= 4 ? '#ccc' : star === 3 ? '#999' : '#888', borderRadius: '4px', transition: 'width 0.3s' }} />
-                                    </div>
-                                    <span style={{ width: '2rem', fontSize: '0.85rem', opacity: 0.6 }}>{count}</span>
-                                </div>
+                                    <span style={{ width: '2rem', textAlign: 'right' }}>{star}★</span>
+                                    <span className="track"><span className="fill" style={{ width: `${pct}%`, display: 'block' }} /></span>
+                                    <span style={{ width: '2rem', textAlign: 'left' }}>{count}</span>
+                                </button>
                             );
                         })}
                     </div>
                 </div>
             </div>
 
+            {filter && (
+                <div className="cluster" style={{ marginBottom: '1rem' }}>
+                    <span className="text-sm text-secondary">Showing {filter}★ and above</span>
+                    <button className="link-btn accent" onClick={() => setFilter('')}>Clear filter</button>
+                </div>
+            )}
+
             {/* Feedback List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className="stack">
                 {feedbacks.length === 0 ? (
-                    <div className="glass-card" style={{ textAlign: 'center', padding: '2rem' }}>
-                        <p style={{ opacity: 0.6 }}>No feedback yet.</p>
+                    <div className="empty-state">
+                        <div className="emoji">💬</div>
+                        <p>No feedback yet.</p>
                     </div>
                 ) : (
                     feedbacks.map((fb, i) => (
-                        <div key={i} className="glass-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                    <span style={{ color: '#999' }}>
-                                        {'★'.repeat(fb.rating)}{'☆'.repeat(5 - fb.rating)}
-                                    </span>
-                                    <span style={{ fontSize: '0.85rem', opacity: 0.7 }}>
+                        <div key={i} className="glass-card fade-in" style={{ padding: '1.1rem 1.25rem' }}>
+                            <div className="page-header-row" style={{ alignItems: 'center', marginBottom: '0.5rem', gap: '0.5rem' }}>
+                                <div className="cluster" style={{ gap: '0.75rem' }}>
+                                    {stars(fb.rating)}
+                                    <span className="text-sm text-secondary">
                                         {fb.isAnonymous || !fb.participant
                                             ? '🔒 Anonymous'
                                             : `${fb.participant.firstName} ${fb.participant.lastName}`}
                                     </span>
                                 </div>
-                                <span style={{ fontSize: '0.8rem', opacity: 0.5 }}>
-                                    {new Date(fb.createdAt).toLocaleDateString()}
-                                </span>
+                                <span className="text-xs text-muted">{new Date(fb.createdAt).toLocaleDateString()}</span>
                             </div>
-                            {fb.comment && <p style={{ margin: 0, lineHeight: 1.6, opacity: 0.8 }}>{fb.comment}</p>}
+                            {fb.comment && <p className="text-secondary" style={{ lineHeight: 1.65 }}>{fb.comment}</p>}
                         </div>
                     ))
                 )}

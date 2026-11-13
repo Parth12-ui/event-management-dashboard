@@ -60,101 +60,104 @@ export default function MerchOrders() {
         rejected: orders.filter((o) => o.paymentStatus === 'rejected').length,
     };
 
+    const tiles = [
+        { key: 'all', label: 'Total Orders', value: stats.total, tone: '' },
+        { key: 'pending_approval', label: 'Pending', value: stats.pending, tone: 'tone-warning' },
+        { key: 'approved', label: 'Approved', value: stats.approved, tone: 'tone-success' },
+        { key: 'rejected', label: 'Rejected', value: stats.rejected, tone: 'tone-danger' },
+    ];
+    const statusBadge = { approved: 'badge-green', rejected: 'badge-red' };
+
     return (
         <div className="page-container">
-            <h1 className="page-title">Merch Orders — {event?.name}</h1>
+            <div className="page-header">
+                <h1>Merch Orders</h1>
+                <p>{event?.name} — review payment proofs and approve orders</p>
+            </div>
 
-            {/* Stats */}
-            <div className="grid-4" style={{ marginBottom: '2rem' }}>
-                <div className="stat-card" onClick={() => setFilter('all')} style={{ cursor: 'pointer', border: filter === 'all' ? '1px solid var(--accent)' : 'none' }}>
-                    <span className="stat-value">{stats.total}</span>
-                    <span className="stat-label">Total Orders</span>
-                </div>
-                <div className="stat-card" onClick={() => setFilter('pending_approval')} style={{ cursor: 'pointer', border: filter === 'pending_approval' ? '1px solid #999' : 'none' }}>
-                    <span className="stat-value" style={{ color: '#999' }}>{stats.pending}</span>
-                    <span className="stat-label">Pending</span>
-                </div>
-                <div className="stat-card" onClick={() => setFilter('approved')} style={{ cursor: 'pointer', border: filter === 'approved' ? '1px solid #aaa' : 'none' }}>
-                    <span className="stat-value" style={{ color: '#ccc' }}>{stats.approved}</span>
-                    <span className="stat-label">Approved</span>
-                </div>
-                <div className="stat-card" onClick={() => setFilter('rejected')} style={{ cursor: 'pointer', border: filter === 'rejected' ? '1px solid #666' : 'none' }}>
-                    <span className="stat-value" style={{ color: '#888' }}>{stats.rejected}</span>
-                    <span className="stat-label">Rejected</span>
-                </div>
+            {/* Stats — click to filter */}
+            <div className="grid-4 mb-page">
+                {tiles.map((t) => (
+                    <button key={t.key} type="button"
+                        className={`glass-card stat-card filterable ${t.tone} ${filter === t.key ? 'active' : ''}`}
+                        onClick={() => setFilter(t.key)}
+                        style={{ font: 'inherit', color: 'inherit' }}
+                    >
+                        <span className="stat-value">{t.value}</span>
+                        <span className="stat-label">{t.label}</span>
+                    </button>
+                ))}
             </div>
 
             {/* Orders */}
             {filteredOrders.length === 0 ? (
-                <div className="glass-card" style={{ textAlign: 'center', padding: '3rem' }}>
-                    <p style={{ opacity: 0.6 }}>No orders found.</p>
+                <div className="empty-state">
+                    <div className="emoji">📦</div>
+                    <p>No orders found.</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="stack-lg">
                     {filteredOrders.map((order) => (
-                        <div key={order._id} className="glass-card">
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div key={order._id} className="glass-card fade-in">
+                            <div className="page-header-row" style={{ alignItems: 'center' }}>
                                 <div>
-                                    <h4 style={{ margin: 0 }}>
+                                    <h3 style={{ fontSize: 'var(--font-base)' }}>
                                         {order.participant?.firstName} {order.participant?.lastName}
-                                    </h4>
-                                    <p style={{ opacity: 0.6, fontSize: '0.85rem', margin: '0.25rem 0' }}>
-                                        {order.participant?.email}
-                                    </p>
+                                    </h3>
+                                    <p className="text-xs text-muted">{order.participant?.email}</p>
                                 </div>
-                                <span className={`badge ${order.paymentStatus === 'approved' ? 'badge-success' :
-                                    order.paymentStatus === 'rejected' ? 'badge-danger' :
-                                        'badge-warning'
-                                    }`}>
-                                    {order.paymentStatus}
+                                <span className={`badge ${statusBadge[order.paymentStatus] || 'badge-warning'}`}>
+                                    {order.paymentStatus?.replace('_', ' ')}
                                 </span>
                             </div>
 
                             {/* Items */}
-                            <div style={{ margin: '1rem 0', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-                                {order.merchandiseSelections?.map((sel, i) => (
-                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.25rem 0' }}>
-                                        <span>{sel.itemName} {sel.size && `(${sel.size})`} {sel.color && `— ${sel.color}`}</span>
-                                        <span>x{sel.quantity}</span>
-                                    </div>
-                                ))}
+                            <div className="inset" style={{ margin: '1rem 0' }}>
+                                <div className="info-list">
+                                    {order.merchandiseSelections?.map((sel, i) => (
+                                        <div key={i}>
+                                            <span>{sel.itemName} {sel.size && `(${sel.size})`} {sel.color && `— ${sel.color}`}</span>
+                                            <span className="v">×{sel.quantity}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
 
                             {/* Payment Proof */}
                             {order.paymentProofUrl && (
-                                <div style={{ marginBottom: '1rem' }}>
-                                    <p style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.5rem' }}>Payment Proof:</p>
+                                <div className="mb-section">
+                                    <span className="callout-label">Payment proof</span>
                                     <img
                                         src={`${(import.meta.env.VITE_API_URL || '').replace('/api', '')}${order.paymentProofUrl}`}
                                         alt="Payment proof"
-                                        style={{ maxWidth: '300px', maxHeight: '200px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}
+                                        className="proof-img"
                                     />
                                 </div>
                             )}
 
                             {/* Ticket info if approved */}
                             {order.ticketId && (
-                                <div style={{ padding: '0.5rem', background: 'rgba(255,255,255,0.06)', borderRadius: '8px', marginBottom: '1rem' }}>
-                                    <span style={{ fontSize: '0.85rem' }}>🎫 Ticket: <strong>{order.ticketId}</strong></span>
+                                <div className="mb-section">
+                                    <span className="code-chip"><span className="code-label">🎫 Ticket</span>{order.ticketId}</span>
                                 </div>
                             )}
 
                             {/* Actions */}
                             {order.paymentStatus === 'pending_approval' && (
-                                <div style={{ display: 'flex', gap: '1rem' }}>
+                                <div className="cluster">
                                     <button
                                         className="btn btn-success"
                                         onClick={() => handleApprove(order._id)}
                                         disabled={!!processing[order._id]}
                                     >
-                                        {processing[order._id] === 'approving' ? 'Approving...' : '✅ Approve'}
+                                        {processing[order._id] === 'approving' ? 'Approving...' : '✓ Approve'}
                                     </button>
                                     <button
                                         className="btn btn-danger"
                                         onClick={() => handleReject(order._id)}
                                         disabled={!!processing[order._id]}
                                     >
-                                        {processing[order._id] === 'rejecting' ? 'Rejecting...' : '❌ Reject'}
+                                        {processing[order._id] === 'rejecting' ? 'Rejecting...' : '✕ Reject'}
                                     </button>
                                 </div>
                             )}

@@ -52,16 +52,18 @@ export default function BrowseEvents() {
 
             {/* Trending */}
             {trending.length > 0 && (
-                <div style={{ marginBottom: '2rem' }}>
-                    <h2 style={{ fontSize: 'var(--font-lg)', fontWeight: 700, marginBottom: '1rem' }}>🔥 Trending Now</h2>
-                    <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+                <div className="mb-page">
+                    <h2 className="section-title">🔥 Trending Now</h2>
+                    <div className="card-grid">
                         {trending.map((e) => <EventCard key={e._id} event={e} linkPrefix="/browse" />)}
                     </div>
                 </div>
             )}
 
+            <h2 className="section-title">All Events</h2>
+            <div className="glass-card mb-section" style={{ padding: '1rem' }}>
             {/* Search */}
-            <div className="search-bar">
+            <div className="search-bar" style={{ marginBottom: '0.75rem' }}>
                 <input
                     type="text"
                     placeholder="Search events, organizers, tags..."
@@ -71,7 +73,7 @@ export default function BrowseEvents() {
             </div>
 
             {/* Filters */}
-            <div className="filters-bar">
+            <div className="filters-bar" style={{ marginBottom: 0 }}>
                 <select value={filters.type} onChange={(e) => setFilters({ ...filters, type: e.target.value })}>
                     <option value="">All Types</option>
                     <option value="normal">Normal</option>
@@ -90,10 +92,11 @@ export default function BrowseEvents() {
                 </select>
                 <input type="date" value={filters.startDate} onChange={(e) => setFilters({ ...filters, startDate: e.target.value })} />
                 <input type="date" value={filters.endDate} onChange={(e) => setFilters({ ...filters, endDate: e.target.value })} />
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                <label className="check-label">
                     <input type="checkbox" checked={filters.followedOnly} onChange={(e) => setFilters({ ...filters, followedOnly: e.target.checked })} />
                     Followed Clubs Only
                 </label>
+            </div>
             </div>
 
             {/* Results */}
@@ -106,7 +109,7 @@ export default function BrowseEvents() {
                 </div>
             ) : (
                 <>
-                    <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                    <div className="card-grid">
                         {events.map((e) => <EventCard key={e._id} event={e} linkPrefix="/browse" />)}
                     </div>
 

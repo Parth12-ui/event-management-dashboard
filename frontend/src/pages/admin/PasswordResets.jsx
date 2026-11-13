@@ -63,19 +63,15 @@ export default function PasswordResets() {
 
             {/* New Password Modal */}
             {newPasswordModal && (
-                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, backdropFilter: 'blur(4px)' }}
+                <div className="modal-overlay"
                     onClick={() => setNewPasswordModal(null)}
                 >
-                    <div className="glass-card" style={{ maxWidth: 420, width: '90%', textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
-                        <h3 style={{ marginBottom: '1rem', color: 'var(--success)' }}>✅ Password Reset Approved</h3>
-                        <p style={{ fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+                    <div className="modal-content" role="dialog" aria-modal="true" style={{ maxWidth: 420, padding: '1.75rem', textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
+                        <h3 className="card-title" style={{ color: '#6be3ad', marginBottom: '0.5rem' }}>✅ Password Reset Approved</h3>
+                        <p className="text-sm text-secondary" style={{ marginBottom: '1.25rem' }}>
                             The new password has been auto-generated. Please share it with the organizer securely.
                         </p>
-                        <div style={{ padding: '1rem', background: 'rgba(255,255,255,0.08)', borderRadius: '8px', marginBottom: '1rem' }}>
-                            <span style={{ fontFamily: 'monospace', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--accent)', letterSpacing: '2px' }}>
-                                {newPasswordModal}
-                            </span>
-                        </div>
+                        <span className="code-display" style={{ fontSize: '1.35rem', letterSpacing: '0.08em', marginBottom: '1.25rem' }}>{newPasswordModal}</span>
                         <button className="btn btn-primary" onClick={() => {
                             navigator.clipboard.writeText(newPasswordModal);
                             setNewPasswordModal(null);
@@ -87,50 +83,47 @@ export default function PasswordResets() {
             )}
 
             {/* Pending Requests */}
-            <h2 style={{ fontSize: 'var(--font-lg)', fontWeight: 700, marginBottom: '1rem' }}>
-                Pending ({pending.length})
-            </h2>
+            <h2 className="section-title">Pending <span className="count">{pending.length}</span></h2>
 
             {pending.length === 0 ? (
-                <div className="empty-state" style={{ padding: '2rem' }}>
+                <div className="empty-state mb-page" style={{ padding: '2rem' }}>
                     <p>✅ No pending requests</p>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '2rem' }}>
+                <div className="stack mb-page">
                     {pending.map((req) => (
-                        <div key={req._id} className="glass-card fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                        <div key={req._id} className="glass-card fade-in stack-lg">
+                            <div className="page-header-row">
                                 <div>
                                     <h3 style={{ fontSize: 'var(--font-base)', fontWeight: 600 }}>{req.organizer?.name || 'Unknown'}</h3>
-                                    <div style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+                                    <div className="meta-row">
                                         <span>🏷️ {categoryLabels[req.organizer?.category] || req.organizer?.category || 'N/A'}</span>
                                         <span>📧 {req.organizer?.loginEmail}</span>
                                         <span>📅 {new Date(req.createdAt).toLocaleDateString()}</span>
                                     </div>
                                 </div>
-                                <span className="badge badge-warning">⏳ Pending</span>
+                                <span className="badge badge-warning">Pending</span>
                             </div>
 
                             {req.reason && (
-                                <div style={{ padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', borderLeft: '3px solid var(--accent)' }}>
-                                    <span style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Reason:</span>
-                                    <p style={{ fontSize: 'var(--font-sm)', color: 'var(--text-secondary)', margin: 0 }}>{req.reason}</p>
+                                <div className="callout">
+                                    <span className="callout-label">Reason</span>
+                                    <p className="text-sm text-secondary">{req.reason}</p>
                                 </div>
                             )}
 
                             <div className="form-group" style={{ marginBottom: 0 }}>
-                                <label style={{ fontSize: 'var(--font-xs)' }}>Admin Comment (optional)</label>
+                                <label>Admin Comment <span className="label-note">(optional)</span></label>
                                 <textarea
                                     className="form-input"
                                     rows={2}
                                     value={comments[req._id] || ''}
                                     onChange={(e) => setComments({ ...comments, [req._id]: e.target.value })}
                                     placeholder="Add a comment for approval/rejection..."
-                                    style={{ fontSize: 'var(--font-sm)' }}
                                 />
                             </div>
 
-                            <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                            <div className="cluster" style={{ justifyContent: 'flex-end' }}>
                                 <button className="btn btn-success btn-sm" onClick={() => handleApprove(req._id)}>✓ Approve</button>
                                 <button className="btn btn-danger btn-sm" onClick={() => handleReject(req._id)}>✕ Reject</button>
                             </div>
@@ -142,9 +135,7 @@ export default function PasswordResets() {
             {/* Resolved History */}
             {resolved.length > 0 && (
                 <>
-                    <h2 style={{ fontSize: 'var(--font-lg)', fontWeight: 700, marginBottom: '1rem' }}>
-                        Resolved ({resolved.length})
-                    </h2>
+                    <h2 className="section-title">Resolved <span className="count">{resolved.length}</span></h2>
                     <div className="table-container">
                         <table>
                             <thead>
@@ -167,7 +158,7 @@ export default function PasswordResets() {
                                         <td style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{req.reason || '—'}</td>
                                         <td>
                                             <span className={`badge ${req.status === 'approved' ? 'badge-green' : 'badge-red'}`}>
-                                                {req.status === 'approved' ? '✅ Approved' : '❌ Rejected'}
+                                                {req.status === 'approved' ? 'Approved' : 'Rejected'}
                                             </span>
                                         </td>
                                         <td style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{req.adminComment || '—'}</td>

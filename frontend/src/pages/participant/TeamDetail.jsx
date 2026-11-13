@@ -70,31 +70,33 @@ export default function TeamDetail() {
     if (error && !team) return <div className="page-container"><div className="alert alert-error">{error}</div></div>;
     if (!team) return null;
 
+    const teamBadge = { complete: 'badge-green', forming: 'badge-yellow', closed: 'badge-purple' };
+    const initials = (m) => `${m.firstName?.[0] || ''}${m.lastName?.[0] || ''}` || '?';
+
     return (
         <div className="page-container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div className="page-header page-header-row">
                 <div>
-                    <h1 className="page-title" style={{ marginBottom: 0 }}>{team.name}</h1>
-                    <p style={{ opacity: 0.7, marginTop: '0.5rem' }}>{team.event?.name}</p>
+                    <h1>{team.name}</h1>
+                    <p>{team.event?.name}</p>
                 </div>
-                <span className={`badge ${team.status === 'complete' ? 'badge-success' : team.status === 'forming' ? 'badge-warning' : team.status === 'closed' ? 'badge-accent' : 'badge-danger'}`} style={{ fontSize: '1rem', padding: '0.5rem 1rem' }}>
-                    {team.status}
-                </span>
+                <span className={`badge ${teamBadge[team.status] || 'badge-red'}`}>{team.status}</span>
             </div>
 
             {error && <div className="alert alert-error">{error}</div>}
             {successMsg && <div className="alert alert-success">{successMsg}</div>}
 
-            <div className="grid-2">
+            <div className="layout-split">
                 {/* Members */}
                 <div className="glass-card">
-                    <h3>👥 Team Members ({team.members?.length || 0}/{team.maxSize})</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '1rem' }}>
+                    <h3 className="section-title">Team Members <span className="count">{team.members?.length || 0}/{team.maxSize}</span></h3>
+                    <div className="stack" style={{ gap: '0.5rem' }}>
                         {team.members?.map((member) => (
-                            <div key={member._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                                <div>
+                            <div key={member._id} className="member-row">
+                                <span className="avatar">{initials(member)}</span>
+                                <div className="member-info">
                                     <strong>{member.firstName} {member.lastName}</strong>
-                                    <p style={{ opacity: 0.6, fontSize: '0.85rem', margin: 0 }}>{member.email}</p>
+                                    <p>{member.email}</p>
                                 </div>
                                 {member._id === team.leader?._id && (
                                     <span className="badge badge-accent">Leader</span>
@@ -106,14 +108,10 @@ export default function TeamDetail() {
 
                 {/* Invite & Actions */}
                 <div className="glass-card">
-                    <h3>🔗 Invite Code</h3>
-                    <div style={{ margin: '1.5rem 0', padding: '1.5rem', background: 'rgba(255,255,255,0.06)', borderRadius: '12px', textAlign: 'center' }}>
-                        <span style={{ fontFamily: 'monospace', fontSize: '2rem', fontWeight: 'bold', color: 'var(--accent)', letterSpacing: '4px' }}>
-                            {team.inviteCode}
-                        </span>
-                    </div>
-                    <p style={{ opacity: 0.6, fontSize: '0.85rem', textAlign: 'center' }}>
-                        Share this code with teammates to join your team
+                    <h3 className="section-title">Invite Code</h3>
+                    <span className="code-display">{team.inviteCode}</span>
+                    <p className="hint" style={{ textAlign: 'center', marginTop: '0.75rem' }}>
+                        Share this code with teammates so they can join
                     </p>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginTop: '2rem' }}>
@@ -138,8 +136,8 @@ export default function TeamDetail() {
                                                 {maxSize > minSize && ` (max ${maxSize})`}
                                             </div>
                                             <button
-                                                className="btn btn-primary"
-                                                style={{ width: '100%', fontSize: '1rem', padding: '0.75rem' }}
+                                                className="btn btn-primary btn-lg"
+                                                style={{ width: '100%' }}
                                                 onClick={handleClose}
                                                 disabled={closing || !meetsMin}
                                             >

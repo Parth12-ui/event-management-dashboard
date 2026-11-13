@@ -215,23 +215,23 @@ export default function EventDetail() {
         <div className="page-container">
             <div className="fade-in">
                 {/* Header */}
-                <div style={{ marginBottom: '2rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <div className="mb-page">
+                    <div className="cluster" style={{ marginBottom: '0.9rem' }}>
                         <span className={`badge ${event.type === 'merchandise' ? 'badge-yellow' : 'badge-purple'}`}>{event.type}</span>
                         <span className={`badge ${event.status === 'published' ? 'badge-green' : 'badge-blue'}`}>{event.status}</span>
                         {event.eligibility !== 'all' && <span className="badge badge-cyan">{event.eligibility} only</span>}
                         {event.isTeamEvent && <span className="badge badge-cyan">👥 Team</span>}
                     </div>
-                    <h1 style={{ fontSize: 'var(--font-4xl)', fontWeight: 800 }}>{event.name}</h1>
-                    <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>by {event.organizer?.name || 'Unknown'}</p>
+                    <h1 className="page-title" style={{ fontSize: 'var(--font-4xl)' }}>{event.name}</h1>
+                    <p className="text-secondary" style={{ marginTop: '0.4rem' }}>by <strong style={{ color: 'var(--text-primary)' }}>{event.organizer?.name || 'Unknown'}</strong></p>
                 </div>
 
-                <div className="grid-2" style={{ gap: '2rem', gridTemplateColumns: '2fr 1fr' }}>
+                <div className="layout-sidebar">
                     {/* Left: Details */}
                     <div>
-                        <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                            <h3 style={{ marginBottom: '0.75rem' }}>Description</h3>
-                            <p style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>{event.description || 'No description provided'}</p>
+                        <div className="glass-card mb-section">
+                            <h3 className="card-title">Description</h3>
+                            <p className="text-secondary" style={{ whiteSpace: 'pre-wrap' }}>{event.description || 'No description provided'}</p>
                         </div>
 
                         {event.tags?.length > 0 && (
@@ -242,11 +242,11 @@ export default function EventDetail() {
 
                         {/* Custom Form (for NON-team events with custom fields, shown when not registered) */}
                         {event.customForm?.length > 0 && !isRegistered && !event.isTeamEvent && (
-                            <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                                <h3 style={{ marginBottom: '1rem' }}>Registration Form</h3>
+                            <div className="glass-card mb-section">
+                                <h3 className="card-title">Registration Form</h3>
                                 {event.customForm.map((field) => (
                                     <div key={field._id} className="form-group">
-                                        <label>{field.label} {field.required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
+                                        <label>{field.label} {field.required && <span className="required">*</span>}</label>
                                         {field.fieldType === 'text' || field.fieldType === 'email' || field.fieldType === 'number' ? (
                                             <input type={field.fieldType} className="form-input" required={field.required}
                                                 onChange={(e) => setFormResponses({ ...formResponses, [field.label]: e.target.value })} />
@@ -260,9 +260,9 @@ export default function EventDetail() {
                                                 {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                                             </select>
                                         ) : field.fieldType === 'checkbox' ? (
-                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                            <div className="check-group">
                                                 {field.options?.map((opt) => (
-                                                    <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: 'var(--font-sm)' }}>
+                                                    <label key={opt} className="check-label">
                                                         <input type="checkbox" onChange={(e) => {
                                                             const cur = formResponses[field.label] || [];
                                                             setFormResponses({
@@ -281,15 +281,15 @@ export default function EventDetail() {
 
                         {/* Merchandise Items */}
                         {event.type === 'merchandise' && event.merchandiseItems?.length > 0 && !isRegistered && (
-                            <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                                <h3 style={{ marginBottom: '1rem' }}>🛍️ Select Items</h3>
+                            <div className="glass-card mb-section">
+                                <h3 className="card-title">🛍️ Select Items</h3>
                                 {event.merchandiseItems.map((item) => {
                                     const inCart = merchSelections.find((s) => s.itemId === item._id);
                                     return (
-                                        <div key={item._id} style={{ padding: '1rem 0', borderBottom: '1px solid var(--border)' }}>
+                                        <div key={item._id} className="merch-item">
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                 <strong>{item.name}</strong>
-                                                <span style={{ color: 'var(--accent)', fontWeight: 600 }}>₹{item.price}</span>
+                                                <span className="price">₹{item.price}</span>
                                             </div>
                                             <div style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', margin: '0.25rem 0' }}>
                                                 Stock: {item.stockQuantity} | Limit: {item.purchaseLimitPerParticipant}/person
@@ -297,7 +297,7 @@ export default function EventDetail() {
                                             {item.stockQuantity > 0 ? (
                                                 inCart ? (
                                                     /* Already added — show quantity controls and options */
-                                                    <div style={{ marginTop: '0.5rem', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid var(--accent)' }}>
+                                                    <div className="inset inset-accent" style={{ marginTop: '0.6rem' }}>
                                                         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center', marginBottom: '0.5rem' }}>
                                                             {item.sizes?.length > 0 && (
                                                                 <select className="form-input" style={{ width: 'auto', minWidth: '80px' }}
@@ -337,8 +337,8 @@ export default function EventDetail() {
                                                             )}
                                                         </div>
                                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                                <button className="btn btn-secondary btn-sm" style={{ padding: '0.2rem 0.6rem', minWidth: 'auto' }}
+                                                            <div className="qty-stepper">
+                                                                <button aria-label="Decrease quantity"
                                                                     onClick={() => {
                                                                         if (inCart.quantity > 1) {
                                                                             setMerchSelections(merchSelections.map((s) =>
@@ -346,8 +346,8 @@ export default function EventDetail() {
                                                                             ));
                                                                         }
                                                                     }}>−</button>
-                                                                <span style={{ fontWeight: 600, minWidth: '20px', textAlign: 'center' }}>{inCart.quantity}</span>
-                                                                <button className="btn btn-secondary btn-sm" style={{ padding: '0.2rem 0.6rem', minWidth: 'auto' }}
+                                                                <span>{inCart.quantity}</span>
+                                                                <button aria-label="Increase quantity"
                                                                     onClick={() => {
                                                                         if (inCart.quantity < item.purchaseLimitPerParticipant) {
                                                                             setMerchSelections(merchSelections.map((s) =>
@@ -357,10 +357,10 @@ export default function EventDetail() {
                                                                     }}>+</button>
                                                             </div>
                                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                                <span style={{ fontSize: 'var(--font-sm)', color: 'var(--text-secondary)' }}>
+                                                                <span className="price text-sm">
                                                                     ₹{item.price * inCart.quantity}
                                                                 </span>
-                                                                <button className="btn btn-danger btn-sm" style={{ padding: '0.2rem 0.5rem', minWidth: 'auto' }}
+                                                                <button className="btn btn-danger btn-sm" aria-label="Remove item"
                                                                     onClick={() => setMerchSelections(merchSelections.filter((s) => s.itemId !== item._id))}>
                                                                     ✕
                                                                 </button>
@@ -383,16 +383,16 @@ export default function EventDetail() {
 
                                 {/* Cart summary */}
                                 {merchSelections.length > 0 && (
-                                    <div style={{ marginTop: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.06)', borderRadius: '8px' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ fontWeight: 600 }}>🛒 Cart ({merchSelections.length} item{merchSelections.length > 1 ? 's' : ''})</span>
-                                            <span style={{ fontWeight: 700, color: 'var(--accent)', fontSize: 'var(--font-lg)' }}>
+                                    <div className="cart-summary">
+                                        <>
+                                            <span>🛒 Cart ({merchSelections.length} item{merchSelections.length > 1 ? 's' : ''})</span>
+                                            <span className="price">
                                                 ₹{merchSelections.reduce((sum, s) => {
                                                     const item = event.merchandiseItems.find((i) => i._id === s.itemId);
                                                     return sum + (item ? item.price * s.quantity : 0);
                                                 }, 0)}
                                             </span>
-                                        </div>
+                                        </>
                                     </div>
                                 )}
                             </div>
@@ -419,14 +419,14 @@ export default function EventDetail() {
                                                 {showFullTicket ? 'Hide Full Ticket' : '🔍 View Full Ticket'}
                                             </button>
                                             {showFullTicket && ticketData && (
-                                                <div style={{ marginTop: '0.75rem', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '0.5rem', fontSize: 'var(--font-xs)' }}>
-                                                    {ticketData.qrCode && <img src={ticketData.qrCode} alt="Full QR" style={{ width: '200px', margin: '0 auto 0.5rem', display: 'block' }} />}
-                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                                                        <div><strong>Ticket ID:</strong> {ticketData.ticketId}</div>
-                                                        <div><strong>Event:</strong> {ticketData.eventName}</div>
-                                                        <div><strong>Participant:</strong> {ticketData.participantName}</div>
-                                                        <div><strong>Status:</strong> {ticketData.status}</div>
-                                                        <div><strong>Registered:</strong> {new Date(ticketData.registeredAt).toLocaleString()}</div>
+                                                <div className="inset" style={{ marginTop: '0.75rem', textAlign: 'left' }}>
+                                                    {ticketData.qrCode && <img src={ticketData.qrCode} alt="Full QR" className="qr-code" style={{ width: 200, height: 200 }} />}
+                                                    <div className="info-list">
+                                                        <div><span className="k">Ticket ID</span><span className="v mono">{ticketData.ticketId}</span></div>
+                                                        <div><span className="k">Event</span><span className="v">{ticketData.eventName}</span></div>
+                                                        <div><span className="k">Participant</span><span className="v">{ticketData.participantName}</span></div>
+                                                        <div><span className="k">Status</span><span className="v">{ticketData.status}</span></div>
+                                                        <div><span className="k">Registered</span><span className="v">{new Date(ticketData.registeredAt).toLocaleString()}</span></div>
                                                     </div>
                                                 </div>
                                             )}
@@ -455,14 +455,14 @@ export default function EventDetail() {
 
                         {/* Payment Proof Upload (for merchandise orders in pending_approval state) */}
                         {isRegistered && registration && event.type === 'merchandise' && registration.paymentStatus === 'pending_approval' && !registration.paymentProofUrl && (
-                            <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                                <h3 style={{ marginBottom: '0.75rem' }}>💳 Upload Payment Proof</h3>
+                            <div className="glass-card mb-section">
+                                <h3 className="card-title">💳 Upload Payment Proof</h3>
                                 <p style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>
                                     Upload a screenshot of your payment to get your order approved.
                                 </p>
-                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                <div className="cluster" style={{ justifyContent: 'space-between' }}>
                                     <input type="file" accept="image/*" onChange={(e) => setPaymentFile(e.target.files[0])}
-                                        style={{ flex: 1, fontSize: 'var(--font-sm)' }} />
+                                        style={{ flex: 1, minWidth: 0 }} />
                                     <button className="btn btn-primary btn-sm" onClick={handlePaymentProofUpload}
                                         disabled={!paymentFile || uploadingProof}>
                                         {uploadingProof ? 'Uploading...' : '📤 Upload'}
@@ -472,9 +472,9 @@ export default function EventDetail() {
                         )}
                         {/* Payment Proof Already Uploaded */}
                         {isRegistered && registration && event.type === 'merchandise' && registration.paymentProofUrl && registration.paymentStatus === 'pending_approval' && (
-                            <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                                <h3 style={{ marginBottom: '0.75rem' }}>💳 Payment Proof Uploaded</h3>
-                                <div className="badge badge-yellow" style={{ padding: '0.5rem', justifyContent: 'center', width: '100%' }}>
+                            <div className="glass-card mb-section">
+                                <h3 className="card-title">💳 Payment Proof Uploaded</h3>
+                                <div className="status-banner warning">
                                     ✅ Proof submitted — awaiting organizer approval
                                 </div>
                             </div>
@@ -482,26 +482,22 @@ export default function EventDetail() {
 
                         {/* Feedback Section (when event is completed) */}
                         {isRegistered && (event.status === 'completed' || event.status === 'ongoing') && (
-                            <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                                <h3 style={{ marginBottom: '0.75rem' }}>⭐ Event Feedback</h3>
+                            <div className="glass-card mb-section">
+                                <h3 className="card-title">⭐ Event Feedback</h3>
                                 {feedbackSubmitted ? (
-                                    <div className="badge badge-green" style={{ padding: '0.5rem', justifyContent: 'center', width: '100%' }}>
+                                    <div className="status-banner success">
                                         ✅ Thank you for your feedback!
                                     </div>
                                 ) : (
                                     <>
-                                        <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '0.75rem', justifyContent: 'center' }}>
+                                        <div className="star-input">
                                             {[1, 2, 3, 4, 5].map((star) => (
                                                 <button key={star}
                                                     onClick={() => setFeedbackRating(star)}
                                                     onMouseEnter={() => setFeedbackHover(star)}
                                                     onMouseLeave={() => setFeedbackHover(0)}
-                                                    style={{
-                                                        background: 'none', border: 'none', cursor: 'pointer',
-                                                        fontSize: '2rem', color: star <= (feedbackHover || feedbackRating) ? '#FFD700' : '#555',
-                                                        transition: 'color 0.15s, transform 0.15s',
-                                                        transform: star <= (feedbackHover || feedbackRating) ? 'scale(1.1)' : 'scale(1)',
-                                                    }}>
+                                                    aria-label={`${star} star${star > 1 ? 's' : ''}`}
+                                                    className={star <= (feedbackHover || feedbackRating) ? 'on' : ''}>
                                                     ★
                                                 </button>
                                             ))}
@@ -516,9 +512,8 @@ export default function EventDetail() {
                                                 value={feedbackComment} onChange={(e) => setFeedbackComment(e.target.value)}
                                                 rows={3} />
                                         </div>
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: 'var(--font-sm)', color: 'var(--text-muted)', marginBottom: '0.75rem', cursor: 'pointer' }}>
-                                            <input type="checkbox" checked={feedbackAnonymous} onChange={(e) => setFeedbackAnonymous(e.target.checked)}
-                                                style={{ width: '16px', height: '16px', accentColor: 'var(--accent)' }} />
+                                        <label className="check-label" style={{ marginBottom: '0.75rem' }}>
+                                            <input type="checkbox" checked={feedbackAnonymous} onChange={(e) => setFeedbackAnonymous(e.target.checked)} />
                                             Submit anonymously
                                         </label>
                                         <button className="btn btn-primary" style={{ width: '100%' }}
@@ -539,17 +534,17 @@ export default function EventDetail() {
                     </div>
 
                     {/* Right: Sidebar */}
-                    <div>
+                    <aside>
                         <div className="glass-card">
-                            <h3 style={{ marginBottom: '1rem' }}>Event Info</h3>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: 'var(--font-sm)' }}>
-                                <div><span style={{ color: 'var(--text-muted)' }}>📅 Start:</span> {new Date(event.startDate).toLocaleDateString()}</div>
-                                <div><span style={{ color: 'var(--text-muted)' }}>📅 End:</span> {new Date(event.endDate).toLocaleDateString()}</div>
-                                <div><span style={{ color: 'var(--text-muted)' }}>⏰ Deadline:</span> {new Date(event.registrationDeadline).toLocaleDateString()}</div>
-                                <div><span style={{ color: 'var(--text-muted)' }}>💰 Fee:</span> {event.registrationFee > 0 ? `₹${event.registrationFee}` : 'Free'}</div>
-                                <div><span style={{ color: 'var(--text-muted)' }}>👥 Registered:</span> {event.registrationCount}{event.registrationLimit > 0 ? ` / ${event.registrationLimit}` : ''}</div>
-                                {event.isTeamEvent && <div><span style={{ color: 'var(--text-muted)' }}>👥 Team Size:</span> {event.teamSize?.min || 2}–{event.teamSize?.max || 4}</div>}
-                                <div><span style={{ color: 'var(--text-muted)' }}>📧 Contact:</span> {event.organizer?.contactEmail || 'N/A'}</div>
+                            <h3 className="card-title">Event Info</h3>
+                            <div className="info-list">
+                                <div><span className="k">📅 Starts</span><span className="v">{new Date(event.startDate).toLocaleDateString()}</span></div>
+                                <div><span className="k">🏁 Ends</span><span className="v">{new Date(event.endDate).toLocaleDateString()}</span></div>
+                                <div><span className="k">⏰ Deadline</span><span className="v">{new Date(event.registrationDeadline).toLocaleDateString()}</span></div>
+                                <div><span className="k">💰 Fee</span><span className="v">{event.registrationFee > 0 ? `₹${event.registrationFee}` : 'Free'}</span></div>
+                                <div><span className="k">👥 Registered</span><span className="v">{event.registrationCount}{event.registrationLimit > 0 ? ` / ${event.registrationLimit}` : ''}</span></div>
+                                {event.isTeamEvent && <div><span className="k">👥 Team size</span><span className="v">{event.teamSize?.min || 2}–{event.teamSize?.max || 4}</span></div>}
+                                <div><span className="k">📧 Contact</span><span className="v">{event.organizer?.contactEmail || 'N/A'}</span></div>
                             </div>
 
                             {/* Messages */}
@@ -562,24 +557,24 @@ export default function EventDetail() {
                             {/* Action buttons */}
                             <div style={{ marginTop: '1.5rem' }}>
                                 {isRegistered ? (
-                                    <div className="badge badge-green" style={{ width: '100%', justifyContent: 'center', padding: '0.5rem' }}>
+                                    <div className="status-banner success">
                                         ✅ Already Registered
                                     </div>
                                 ) : deadlinePassed ? (
-                                    <div className="badge badge-red" style={{ width: '100%', justifyContent: 'center', padding: '0.5rem' }}>
+                                    <div className="status-banner danger">
                                         ⏰ Deadline Passed
                                     </div>
                                 ) : limitReached ? (
-                                    <div className="badge badge-red" style={{ width: '100%', justifyContent: 'center', padding: '0.5rem' }}>
+                                    <div className="status-banner danger">
                                         🚫 Registration Full
                                     </div>
                                 ) : !isEligible ? (
-                                    <div className="badge badge-red" style={{ width: '100%', justifyContent: 'center', padding: '0.5rem', textAlign: 'center' }}>
+                                    <div className="status-banner danger">
                                         🚫 Not eligible — this event is for {event.eligibility} participants only
                                     </div>
                                 ) : event.isTeamEvent ? (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                        <div style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', textAlign: 'center' }}>
+                                        <div className="hint" style={{ textAlign: 'center', marginTop: 0 }}>
                                             👥 Team event — {event.teamSize?.min || 2}–{event.teamSize?.max || 4} members
                                         </div>
                                         {!showCreateTeam && !showJoinTeam && (
@@ -604,10 +599,10 @@ export default function EventDetail() {
                                                 {/* Required custom form fields inline */}
                                                 {event.customForm?.length > 0 && (
                                                     <div style={{ marginBottom: '0.75rem' }}>
-                                                        <p style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Registration Fields</p>
+                                                        <p className="callout-label">Registration Fields</p>
                                                         {event.customForm.map((field) => (
                                                             <div key={field._id} className="form-group" style={{ marginBottom: '0.5rem' }}>
-                                                                <label style={{ fontSize: 'var(--font-sm)' }}>{field.label} {field.required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
+                                                                <label>{field.label} {field.required && <span className="required">*</span>}</label>
                                                                 {field.fieldType === 'text' || field.fieldType === 'email' || field.fieldType === 'number' ? (
                                                                     <input type={field.fieldType} className="form-input" required={field.required}
                                                                         value={formResponses[field.label] || ''}
@@ -624,9 +619,9 @@ export default function EventDetail() {
                                                                         {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                                                                     </select>
                                                                 ) : field.fieldType === 'checkbox' ? (
-                                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                                    <div className="check-group">
                                                                         {field.options?.map((opt) => (
-                                                                            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: 'var(--font-xs)' }}>
+                                                                            <label key={opt} className="check-label">
                                                                                 <input type="checkbox"
                                                                                     checked={(formResponses[field.label] || []).includes(opt)}
                                                                                     onChange={(e) => {
@@ -640,9 +635,9 @@ export default function EventDetail() {
                                                                         ))}
                                                                     </div>
                                                                 ) : field.fieldType === 'radio' ? (
-                                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                                    <div className="check-group">
                                                                         {field.options?.map((opt) => (
-                                                                            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: 'var(--font-xs)' }}>
+                                                                            <label key={opt} className="check-label">
                                                                                 <input type="radio" name={`team-form-create-${field._id}`}
                                                                                     checked={formResponses[field.label] === opt}
                                                                                     onChange={() => setFormResponses({ ...formResponses, [field.label]: opt })} /> {opt}
@@ -654,7 +649,7 @@ export default function EventDetail() {
                                                         ))}
                                                     </div>
                                                 )}
-                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <div className="cluster">
                                                     <button className="btn btn-primary btn-sm" onClick={handleCreateTeam} disabled={submitting}>
                                                         {submitting ? 'Creating...' : 'Create'}
                                                     </button>
@@ -671,10 +666,10 @@ export default function EventDetail() {
                                                 {/* Required custom form fields inline */}
                                                 {event.customForm?.length > 0 && (
                                                     <div style={{ marginBottom: '0.75rem' }}>
-                                                        <p style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Registration Fields</p>
+                                                        <p className="callout-label">Registration Fields</p>
                                                         {event.customForm.map((field) => (
                                                             <div key={field._id} className="form-group" style={{ marginBottom: '0.5rem' }}>
-                                                                <label style={{ fontSize: 'var(--font-sm)' }}>{field.label} {field.required && <span style={{ color: 'var(--danger)' }}>*</span>}</label>
+                                                                <label>{field.label} {field.required && <span className="required">*</span>}</label>
                                                                 {field.fieldType === 'text' || field.fieldType === 'email' || field.fieldType === 'number' ? (
                                                                     <input type={field.fieldType} className="form-input" required={field.required}
                                                                         value={formResponses[field.label] || ''}
@@ -691,9 +686,9 @@ export default function EventDetail() {
                                                                         {field.options?.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
                                                                     </select>
                                                                 ) : field.fieldType === 'checkbox' ? (
-                                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                                    <div className="check-group">
                                                                         {field.options?.map((opt) => (
-                                                                            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: 'var(--font-xs)' }}>
+                                                                            <label key={opt} className="check-label">
                                                                                 <input type="checkbox"
                                                                                     checked={(formResponses[field.label] || []).includes(opt)}
                                                                                     onChange={(e) => {
@@ -707,9 +702,9 @@ export default function EventDetail() {
                                                                         ))}
                                                                     </div>
                                                                 ) : field.fieldType === 'radio' ? (
-                                                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                                                                    <div className="check-group">
                                                                         {field.options?.map((opt) => (
-                                                                            <label key={opt} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: 'var(--font-xs)' }}>
+                                                                            <label key={opt} className="check-label">
                                                                                 <input type="radio" name={`team-form-join-${field._id}`}
                                                                                     checked={formResponses[field.label] === opt}
                                                                                     onChange={() => setFormResponses({ ...formResponses, [field.label]: opt })} /> {opt}
@@ -721,7 +716,7 @@ export default function EventDetail() {
                                                         ))}
                                                     </div>
                                                 )}
-                                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <div className="cluster">
                                                     <button className="btn btn-primary btn-sm" onClick={handleJoinTeam} disabled={submitting}>
                                                         {submitting ? 'Joining...' : 'Join'}
                                                     </button>
@@ -741,7 +736,7 @@ export default function EventDetail() {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
         </div>

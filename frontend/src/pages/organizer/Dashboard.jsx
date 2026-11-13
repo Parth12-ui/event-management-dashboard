@@ -32,7 +32,7 @@ export default function Dashboard() {
 
     return (
         <div className="page-container">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="page-header page-header-row">
                 <div>
                     <h1>Organizer Dashboard</h1>
                     <p>Manage your events and track performance</p>
@@ -63,17 +63,17 @@ export default function Dashboard() {
             {/* Events by status */}
             {Object.entries(statusGroups).map(([status, group]) => (
                 group.length > 0 && (
-                    <div key={status} style={{ marginBottom: '2rem' }}>
-                        <h2 style={{ fontSize: 'var(--font-lg)', fontWeight: 700, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <div key={status} className="mb-page">
+                        <h2 className="section-title">
                             <span className={`badge ${statusColors[status]}`}>{status}</span>
-                            <span>({group.length})</span>
+                            <span className="count">{group.length}</span>
                         </h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        <div className="stack">
                             {group.map((event) => (
-                                <Link key={event._id} to={`/organizer/events/${event._id}`} className="glass-card fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', textDecoration: 'none', color: 'inherit' }}>
+                                <Link key={event._id} to={`/organizer/events/${event._id}`} className="glass-card list-row fade-in">
                                     <div>
-                                        <h3 style={{ fontSize: 'var(--font-base)', fontWeight: 600 }}>{event.name}</h3>
-                                        <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>
+                                        <h3>{event.name}</h3>
+                                        <div className="meta-row">
                                             <span>{event.type === 'merchandise' ? '🛍️' : '📋'} {event.type}</span>
                                             <span>👥 {event.registrationCount || 0} registrations</span>
                                             <span>📅 {new Date(event.startDate).toLocaleDateString()}</span>

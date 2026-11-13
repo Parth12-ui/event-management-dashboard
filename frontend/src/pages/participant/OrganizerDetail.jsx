@@ -38,12 +38,12 @@ export default function OrganizerDetail() {
     return (
         <div className="page-container">
             <div className="fade-in">
-                <div className="glass-card" style={{ marginBottom: '2rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                <div className="glass-card mb-page" style={{ padding: '2rem' }}>
+                    <div className="page-header-row">
                         <div>
-                            <span className="badge badge-purple" style={{ marginBottom: '0.5rem' }}>{categoryLabels[organizer.category] || organizer.category}</span>
-                            <h1 style={{ fontSize: 'var(--font-3xl)', fontWeight: 800 }}>{organizer.name}</h1>
-                            <p style={{ color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{organizer.description || 'No description'}</p>
+                            <span className="badge badge-purple" style={{ marginBottom: '0.75rem' }}>{categoryLabels[organizer.category] || organizer.category}</span>
+                            <h1 className="page-title">{organizer.name}</h1>
+                            <p className="text-secondary" style={{ marginTop: '0.5rem', maxWidth: '62ch' }}>{organizer.description || 'No description'}</p>
                             {organizer.contactEmail && (
                                 <p style={{ marginTop: '0.5rem', fontSize: 'var(--font-sm)', color: 'var(--text-muted)' }}>📧 {organizer.contactEmail}</p>
                             )}
@@ -69,7 +69,7 @@ export default function OrganizerDetail() {
                         <p>No {activeTab} events</p>
                     </div>
                 ) : (
-                    <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+                    <div className="card-grid">
                         {displayEvents.map((e) => <EventCard key={e._id} event={e} linkPrefix="/browse" />)}
                     </div>
                 )}

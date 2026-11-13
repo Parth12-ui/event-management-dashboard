@@ -97,18 +97,21 @@ export default function CreateEvent() {
     };
 
     return (
-        <div className="page-container" style={{ maxWidth: 700 }}>
+        <div className="page-container page-narrow">
             <div className="page-header">
                 <h1>Create Event</h1>
-                <p>Step {step} of 3</p>
+                <p>Step {step} of 3 — {['Basic information', step === 2 && form.type === 'merchandise' ? 'Merchandise items' : 'Registration form', 'Preview & create'][step - 1]}</p>
             </div>
 
             {error && <div className="alert alert-error">{error}</div>}
 
             {/* Progress */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem' }}>
-                {[1, 2, 3].map((s) => (
-                    <div key={s} style={{ flex: 1, height: 4, borderRadius: 2, background: s <= step ? 'var(--accent)' : 'var(--border)', transition: 'background 0.3s' }} />
+            <div className="stepper">
+                {['Basics', form.type === 'merchandise' ? 'Items' : 'Form', 'Preview'].map((label, i) => (
+                    <div key={label} className={`step ${i + 1 <= step ? 'done' : ''}`}>
+                        <div className="step-bar" />
+                        <div className="step-label">{i + 1}. {label}</div>
+                    </div>
                 ))}
             </div>
 
@@ -116,7 +119,7 @@ export default function CreateEvent() {
                 {/* Step 1: Basic Info */}
                 {step === 1 && (
                     <>
-                        <h3 style={{ marginBottom: '1.5rem' }}>Basic Information</h3>
+                        <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>Basic Information</h3>
 
                         <div className="form-group">
                             <label>Event Name *</label>
@@ -128,7 +131,7 @@ export default function CreateEvent() {
                             <textarea name="description" className="form-input" placeholder="Describe your event..." value={form.description} onChange={handleChange} rows={4} />
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                        <div className="form-row cols-2">
                             <div className="form-group">
                                 <label>Event Type *</label>
                                 <select name="type" className="form-input" value={form.type} onChange={handleChange}>
@@ -146,7 +149,7 @@ export default function CreateEvent() {
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                        <div className="form-row cols-3">
                             <div className="form-group">
                                 <label>Start Date *</label>
                                 <input name="startDate" type="date" className="form-input" value={form.startDate} onChange={handleChange} />
@@ -161,7 +164,7 @@ export default function CreateEvent() {
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                        <div className="form-row cols-2">
                             <div className="form-group">
                                 <label>Reg. Limit (0 = unlimited)</label>
                                 <input name="registrationLimit" type="number" className="form-input" value={form.registrationLimit} onChange={handleChange} />
@@ -178,13 +181,13 @@ export default function CreateEvent() {
                         </div>
 
                         {/* Team Event Settings */}
-                        <div className="glass-card" style={{ padding: '1rem', marginBottom: '1rem' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 600, marginBottom: form.isTeamEvent ? '1rem' : 0 }}>
+                        <div className="toggle-panel">
+                            <label className="check-label" style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: form.isTeamEvent ? '1rem' : 0 }}>
                                 <input type="checkbox" checked={form.isTeamEvent} onChange={(e) => setForm({ ...form, isTeamEvent: e.target.checked })} />
                                 👥 Team Event
                             </label>
                             {form.isTeamEvent && (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="form-row cols-2">
                                     <div className="form-group">
                                         <label>Min Team Size</label>
                                         <input name="minTeamSize" type="number" className="form-input" min="2" value={form.minTeamSize} onChange={handleChange} />
@@ -206,22 +209,22 @@ export default function CreateEvent() {
                     <>
                         {form.type === 'normal' ? (
                             <>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div className="page-header-row" style={{ alignItems: 'center', marginBottom: '1.25rem' }}>
                                     <h3>Registration Form Builder</h3>
                                     <button className="btn btn-secondary btn-sm" onClick={addField}>+ Add Field</button>
                                 </div>
 
                                 {form.customForm.length === 0 && (
-                                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>No custom fields yet. Click "+ Add Field" to build your registration form.</p>
+                                    <p className="empty-state" style={{ padding: '1.5rem', marginBottom: '1rem', fontSize: 'var(--font-sm)' }}>No custom fields yet. Click "+ Add Field" to build your registration form.</p>
                                 )}
 
                                 {form.customForm.map((field, idx) => (
-                                    <div key={idx} className="glass-card" style={{ marginBottom: '0.75rem', padding: '1rem' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                                            <span style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>Field #{idx + 1}</span>
-                                            <button className="btn btn-danger btn-sm" onClick={() => removeField(idx)}>✕</button>
+                                    <div key={idx} className="builder-item">
+                                        <div className="builder-item-head">
+                                            <span>Field #{idx + 1}</span>
+                                            <button className="btn btn-danger btn-sm" aria-label="Remove field" onClick={() => removeField(idx)}>✕</button>
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.75rem' }}>
+                                        <div className="form-row cols-2-1">
                                             <div className="form-group">
                                                 <label>Label</label>
                                                 <input className="form-input" value={field.label} onChange={(e) => updateField(idx, 'label', e.target.value)} placeholder="Field label" />
@@ -239,7 +242,7 @@ export default function CreateEvent() {
                                                 <input className="form-input" value={typeof field.options === 'string' ? field.options : field.options.join(', ')} onChange={(e) => updateField(idx, 'options', e.target.value)} placeholder="Option 1, Option 2, Option 3" />
                                             </div>
                                         )}
-                                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontSize: 'var(--font-sm)', cursor: 'pointer' }}>
+                                        <label className="check-label">
                                             <input type="checkbox" checked={field.required} onChange={(e) => updateField(idx, 'required', e.target.checked)} /> Required
                                         </label>
                                     </div>
@@ -247,22 +250,22 @@ export default function CreateEvent() {
                             </>
                         ) : (
                             <>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                                <div className="page-header-row" style={{ alignItems: 'center', marginBottom: '1.25rem' }}>
                                     <h3>Merchandise Items</h3>
                                     <button className="btn btn-secondary btn-sm" onClick={addMerchItem}>+ Add Item</button>
                                 </div>
 
                                 {form.merchandiseItems.length === 0 && (
-                                    <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>No items yet. Add merchandise items for participants to purchase.</p>
+                                    <p className="empty-state" style={{ padding: '1.5rem', marginBottom: '1rem', fontSize: 'var(--font-sm)' }}>No items yet. Add merchandise items for participants to purchase.</p>
                                 )}
 
                                 {form.merchandiseItems.map((item, idx) => (
-                                    <div key={idx} className="glass-card" style={{ marginBottom: '0.75rem', padding: '1rem' }}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                                            <span style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>Item #{idx + 1}</span>
-                                            <button className="btn btn-danger btn-sm" onClick={() => removeMerchItem(idx)}>✕</button>
+                                    <div key={idx} className="builder-item">
+                                        <div className="builder-item-head">
+                                            <span>Item #{idx + 1}</span>
+                                            <button className="btn btn-danger btn-sm" aria-label="Remove item" onClick={() => removeMerchItem(idx)}>✕</button>
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.75rem' }}>
+                                        <div className="form-row cols-2-1">
                                             <div className="form-group">
                                                 <label>Item Name</label>
                                                 <input className="form-input" value={item.name} onChange={(e) => updateMerchItem(idx, 'name', e.target.value)} placeholder="T-Shirt" />
@@ -272,7 +275,7 @@ export default function CreateEvent() {
                                                 <input type="number" className="form-input" value={item.price} onChange={(e) => updateMerchItem(idx, 'price', e.target.value)} />
                                             </div>
                                         </div>
-                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                                        <div className="form-row cols-3">
                                             <div className="form-group">
                                                 <label>Stock</label>
                                                 <input type="number" className="form-input" value={item.stockQuantity} onChange={(e) => updateMerchItem(idx, 'stockQuantity', e.target.value)} />
@@ -295,7 +298,7 @@ export default function CreateEvent() {
                             </>
                         )}
 
-                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                        <div className="cluster" style={{ gap: '0.75rem', marginTop: '1rem' }}>
                             <button className="btn btn-secondary" onClick={() => setStep(1)}>← Back</button>
                             <button className="btn btn-primary" onClick={() => setStep(3)}>Preview →</button>
                         </div>
@@ -305,27 +308,27 @@ export default function CreateEvent() {
                 {/* Step 3: Preview */}
                 {step === 3 && (
                     <>
-                        <h3 style={{ marginBottom: '1.5rem' }}>Preview & Create</h3>
+                        <h3 className="card-title" style={{ marginBottom: '1.25rem' }}>Preview & Create</h3>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: 'var(--font-sm)' }}>
-                            <div><strong>Name:</strong> {form.name}</div>
-                            <div><strong>Type:</strong> {form.type}</div>
-                            <div><strong>Eligibility:</strong> {form.eligibility}</div>
-                            <div><strong>Dates:</strong> {form.startDate} to {form.endDate}</div>
-                            <div><strong>Deadline:</strong> {form.registrationDeadline}</div>
-                            <div><strong>Limit:</strong> {form.registrationLimit || 'Unlimited'}</div>
-                            <div><strong>Fee:</strong> ₹{form.registrationFee}</div>
-                            <div><strong>Tags:</strong> {form.tags || 'None'}</div>
-                            {form.isTeamEvent && <div><strong>Team Event:</strong> {form.minTeamSize}–{form.maxTeamSize} members</div>}
-                            {form.type === 'normal' && <div><strong>Custom Fields:</strong> {form.customForm.length}</div>}
-                            {form.type === 'merchandise' && <div><strong>Merch Items:</strong> {form.merchandiseItems.length}</div>}
+                        <div className="info-list">
+                            <div><span className="k">Name</span><span className="v">{form.name || '—'}</span></div>
+                            <div><span className="k">Type</span><span className="v">{form.type}</span></div>
+                            <div><span className="k">Eligibility</span><span className="v">{form.eligibility}</span></div>
+                            <div><span className="k">Dates</span><span className="v">{form.startDate || '—'} → {form.endDate || '—'}</span></div>
+                            <div><span className="k">Deadline</span><span className="v">{form.registrationDeadline || '—'}</span></div>
+                            <div><span className="k">Limit</span><span className="v">{form.registrationLimit || 'Unlimited'}</span></div>
+                            <div><span className="k">Fee</span><span className="v">₹{form.registrationFee}</span></div>
+                            <div><span className="k">Tags</span><span className="v">{form.tags || 'None'}</span></div>
+                            {form.isTeamEvent && <div><span className="k">Team event</span><span className="v">{form.minTeamSize}–{form.maxTeamSize} members</span></div>}
+                            {form.type === 'normal' && <div><span className="k">Custom fields</span><span className="v">{form.customForm.length}</span></div>}
+                            {form.type === 'merchandise' && <div><span className="k">Merch items</span><span className="v">{form.merchandiseItems.length}</span></div>}
                         </div>
 
-                        <p style={{ color: 'var(--text-muted)', marginTop: '1rem', fontSize: 'var(--font-xs)' }}>
+                        <p className="callout text-xs text-secondary" style={{ marginTop: '1.25rem' }}>
                             The event will be created as a <strong>Draft</strong>. You can publish it later from the event detail page.
                         </p>
 
-                        <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                        <div className="cluster" style={{ gap: '0.75rem', marginTop: '1.5rem' }}>
                             <button className="btn btn-secondary" onClick={() => setStep(2)}>← Back</button>
                             <button className="btn btn-primary btn-lg" onClick={handleSubmit} disabled={saving}>
                                 {saving ? 'Creating...' : '🚀 Create Event'}

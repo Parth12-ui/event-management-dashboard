@@ -139,89 +139,51 @@ export default function Forum({ eventId, isOrganizer = false }) {
     const renderMessage = (msg, isReply = false) => (
         <div
             key={msg._id}
-            style={{
-                padding: '1rem',
-                background: msg.isPinned
-                    ? 'rgba(255,255,255,0.08)'
-                    : msg.isAnnouncement
-                        ? 'rgba(255,255,255,0.12)'
-                        : 'rgba(255,255,255,0.03)',
-                borderRadius: '8px',
-                borderLeft: msg.isAnnouncement
-                    ? '3px solid var(--accent)'
-                    : msg.isPinned
-                        ? '3px solid #999'
-                        : '3px solid transparent',
-                marginLeft: isReply ? '2rem' : 0,
-            }}
+            className={`forum-msg ${isReply ? 'reply' : ''} ${msg.isAnnouncement ? 'announcement' : msg.isPinned ? 'pinned' : ''}`}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <strong style={{ color: msg.authorRole === 'organizer' ? 'var(--accent)' : 'inherit' }}>
+            <div className="forum-msg-head">
+                <div className="cluster">
+                    <strong className={msg.authorRole === 'organizer' ? 'text-accent' : ''} style={{ fontSize: 'var(--font-sm)' }}>
                         {msg.authorName}
                     </strong>
-                    {msg.authorRole === 'organizer' && <span className="badge badge-accent" style={{ fontSize: '0.7rem' }}>Organizer</span>}
-                    {msg.isPinned && <span style={{ fontSize: '0.8rem' }}>📌</span>}
-                    {msg.isAnnouncement && <span className="badge badge-warning" style={{ fontSize: '0.7rem' }}>Announcement</span>}
+                    {msg.authorRole === 'organizer' && <span className="badge badge-accent">Organizer</span>}
+                    {msg.isPinned && <span className="badge badge-blue">Pinned</span>}
+                    {msg.isAnnouncement && <span className="badge badge-warning">Announcement</span>}
                 </div>
-                <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>
-                    {new Date(msg.createdAt).toLocaleString()}
-                </span>
+                <span className="forum-msg-time">{new Date(msg.createdAt).toLocaleString()}</span>
             </div>
 
-            <p style={{ margin: '0.5rem 0', lineHeight: 1.6 }}>{msg.content}</p>
+            <p className="forum-msg-body">{msg.content}</p>
 
             {/* Reactions */}
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
-                {msg.reactions && Object.entries(msg.reactions).map(([emoji, users]) =>
-                    users.length > 0 ? (
-                        <button
-                            key={emoji}
-                            onClick={() => reactToMessage(msg._id, emoji)}
-                            style={{
-                                padding: '2px 8px',
-                                borderRadius: '12px',
-                                background: 'rgba(255,255,255,0.1)',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '0.85rem',
-                                color: 'white',
-                            }}
-                        >
-                            {emoji} {users.length}
-                        </button>
-                    ) : null
-                )}
-            </div>
+            {msg.reactions && Object.values(msg.reactions).some((u) => u.length > 0) && (
+                <div className="cluster" style={{ gap: '0.35rem', marginTop: '0.5rem' }}>
+                    {Object.entries(msg.reactions).map(([emoji, users]) =>
+                        users.length > 0 ? (
+                            <button key={emoji} className="reaction-pill" onClick={() => reactToMessage(msg._id, emoji)}>
+                                {emoji} {users.length}
+                            </button>
+                        ) : null
+                    )}
+                </div>
+            )}
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+            <div className="forum-actions">
                 {emojis.map((e) => (
-                    <button
-                        key={e}
-                        onClick={() => reactToMessage(msg._id, e)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.9rem', opacity: 0.6, padding: '2px' }}
-                        title={`React with ${e}`}
-                    >
+                    <button key={e} className="emoji-btn" onClick={() => reactToMessage(msg._id, e)} title={`React with ${e}`} aria-label={`React with ${e}`}>
                         {e}
                     </button>
                 ))}
                 {!isReply && (
-                    <button
-                        onClick={() => setReplyTo(msg._id)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', color: 'var(--accent)' }}
-                    >
-                        ↩ Reply
-                    </button>
+                    <button className="link-btn accent" onClick={() => setReplyTo(msg._id)}>↩ Reply</button>
                 )}
                 {isOrganizer && (
                     <>
-                        <button onClick={() => pinMessage(msg._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', color: '#999' }}>
+                        <button className="link-btn" onClick={() => pinMessage(msg._id)}>
                             {msg.isPinned ? 'Unpin' : '📌 Pin'}
                         </button>
-                        <button onClick={() => deleteMessage(msg._id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', color: '#888' }}>
-                            🗑 Delete
-                        </button>
+                        <button className="link-btn danger" onClick={() => deleteMessage(msg._id)}>🗑 Delete</button>
                     </>
                 )}
             </div>
@@ -230,29 +192,29 @@ export default function Forum({ eventId, isOrganizer = false }) {
 
     return (
         <div className="glass-card" ref={containerRef}>
-            <h3 style={{ marginTop: 0 }}>💬 Discussion Forum</h3>
+            <h3 className="section-title">💬 Discussion <span className="count">{messages.length}</span></h3>
 
             {/* Input */}
-            <form onSubmit={postMessage} style={{ marginBottom: '1.5rem' }}>
+            <form onSubmit={postMessage} style={{ marginBottom: '1.25rem' }}>
                 {replyTo && (
-                    <div style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: '0.5rem', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Replying to message...</span>
-                        <button type="button" onClick={() => setReplyTo(null)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer' }}>✕ Cancel</button>
+                    <div className="forum-reply-note">
+                        <span>↩ Replying to a message</span>
+                        <button type="button" className="link-btn" onClick={() => setReplyTo(null)}>✕ Cancel</button>
                     </div>
                 )}
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div className="forum-compose">
                     <input
                         type="text"
                         className="form-input"
                         placeholder="Write a message..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
-                        style={{ flex: 1, margin: 0 }}
+                        style={{ flex: 1 }}
                     />
-                    <button type="submit" className="btn btn-primary">Post</button>
+                    <button type="submit" className="btn btn-primary" disabled={!input.trim()}>Post</button>
                 </div>
                 {isOrganizer && (
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem', fontSize: '0.85rem', cursor: 'pointer' }}>
+                    <label className="check-label" style={{ marginTop: '0.6rem' }}>
                         <input type="checkbox" checked={isAnnouncement} onChange={(e) => setIsAnnouncement(e.target.checked)} />
                         Post as announcement
                     </label>
@@ -260,9 +222,9 @@ export default function Forum({ eventId, isOrganizer = false }) {
             </form>
 
             {/* Messages */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className="stack">
                 {messages.length === 0 && (
-                    <p style={{ textAlign: 'center', opacity: 0.5 }}>No messages yet. Start the discussion!</p>
+                    <p className="empty-state" style={{ padding: '2rem', fontSize: 'var(--font-sm)' }}>No messages yet. Start the discussion!</p>
                 )}
                 {messages.map((msg) => (
                     <div key={msg._id}>

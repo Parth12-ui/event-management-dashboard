@@ -59,7 +59,7 @@ export default function ManageOrganizers() {
 
     return (
         <div className="page-container">
-            <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="page-header page-header-row">
                 <div>
                     <h1>Manage Organizers</h1>
                     <p>Create, disable, or delete organizer accounts</p>
@@ -71,19 +71,21 @@ export default function ManageOrganizers() {
 
             {/* Create Form */}
             {showCreate && (
-                <div className="glass-card fade-in" style={{ marginBottom: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '1rem' }}>Create New Organizer</h3>
+                <div className="glass-card fade-in mb-section">
+                    <h3 className="card-title">Create New Organizer</h3>
                     {message.text && <div className={`alert alert-${message.type}`}>{message.text}</div>}
                     {newCreds && (
-                        <div className="alert alert-success" style={{ whiteSpace: 'pre-wrap' }}>
-                            <strong>Auto-Generated Credentials:</strong><br />
-                            Email: {newCreds.loginEmail || newCreds.email}<br />
-                            Password: {newCreds.password}<br />
-                            <span style={{ fontSize: 'var(--font-xs)' }}>These have been emailed to the contact email.</span>
+                        <div className="alert alert-success">
+                            <strong>Auto-generated credentials</strong>
+                            <div className="info-list" style={{ margin: '0.5rem 0' }}>
+                                <div><span className="k">Email</span><span className="v mono">{newCreds.loginEmail || newCreds.email}</span></div>
+                                <div><span className="k">Password</span><span className="v mono">{newCreds.password}</span></div>
+                            </div>
+                            <span className="text-xs">These have been emailed to the contact email.</span>
                         </div>
                     )}
                     <form onSubmit={handleCreate}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '0.75rem' }}>
+                        <div className="form-row cols-2-1">
                             <div className="form-group">
                                 <label>Organization Name *</label>
                                 <input className="form-input" value={createForm.name} onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })} required placeholder="Coding Club" />
@@ -135,14 +137,14 @@ export default function ManageOrganizers() {
                                 <tr key={org._id}>
                                     <td style={{ fontWeight: 600 }}>{org.name}</td>
                                     <td><span className="badge badge-purple">{categoryLabels[org.category] || org.category}</span></td>
-                                    <td style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>{org.loginEmail}</td>
+                                    <td className="mono text-muted">{org.loginEmail}</td>
                                     <td>
                                         <span className={`badge ${org.isActive ? 'badge-green' : 'badge-red'}`}>
                                             {org.isActive ? 'Active' : 'Disabled'}
                                         </span>
                                     </td>
                                     <td>
-                                        <div style={{ display: 'flex', gap: '0.375rem' }}>
+                                        <div className="cluster" style={{ gap: '0.375rem', flexWrap: 'nowrap' }}>
                                             <button className={`btn btn-sm ${org.isActive ? 'btn-secondary' : 'btn-success'}`} onClick={() => handleToggle(org._id)}>
                                                 {org.isActive ? 'Disable' : 'Enable'}
                                             </button>

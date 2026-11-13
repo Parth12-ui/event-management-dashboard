@@ -64,7 +64,7 @@ export default function Register() {
                 {error && <div className="alert alert-error">{error}</div>}
 
                 <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div className="form-row cols-2">
                         <div className="form-group">
                             <label>First Name</label>
                             <input name="firstName" className="form-input" placeholder="John" value={form.firstName} onChange={handleChange} required />
@@ -98,7 +98,7 @@ export default function Register() {
                         <input name="contactNumber" className="form-input" placeholder="9876543210" value={form.contactNumber} onChange={handleChange} />
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div className="form-row cols-2">
                         <div className="form-group">
                             <label>Password</label>
                             <input name="password" type="password" className="form-input" placeholder="••••••••" value={form.password} onChange={handleChange} required />

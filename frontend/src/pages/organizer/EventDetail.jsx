@@ -134,16 +134,16 @@ export default function EventDetail() {
         <div className="page-container">
             <div className="fade-in">
                 {/* Header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <div className="page-header page-header-row">
                     <div>
-                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div className="cluster" style={{ marginBottom: '0.75rem' }}>
                             <span className={`badge ${statusColors[event.status]}`}>{event.status}</span>
                             <span className={`badge ${event.type === 'merchandise' ? 'badge-yellow' : 'badge-purple'}`}>{event.type}</span>
                             {event.isTeamEvent && <span className="badge badge-cyan">👥 Team</span>}
                         </div>
-                        <h1 style={{ fontSize: 'var(--font-3xl)', fontWeight: 800 }}>{event.name}</h1>
+                        <h1>{event.name}</h1>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div className="cluster">
                         {event.status === 'draft' && <button className="btn btn-success" onClick={handlePublish}>🚀 Publish</button>}
                         {event.status === 'published' && <button className="btn btn-primary" onClick={() => handleStatusChange('ongoing')}>▶ Start Event</button>}
                         {event.status === 'ongoing' && <button className="btn btn-primary" onClick={() => handleStatusChange('completed')}>✓ Complete</button>}
@@ -156,9 +156,9 @@ export default function EventDetail() {
 
                 {/* Edit Panel */}
                 {editing && (
-                    <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                        <h3 style={{ marginBottom: '1rem' }}>
-                            Edit Event {event.status === 'published' && <span style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)', fontWeight: 400 }}>(limited — event is published)</span>}
+                    <div className="glass-card mb-section">
+                        <h3 className="card-title">
+                            Edit Event {event.status === 'published' && <span className="label-note">(limited — event is published)</span>}
                         </h3>
 
                         {event.status === 'draft' && (
@@ -167,7 +167,7 @@ export default function EventDetail() {
                                     <label>Name</label>
                                     <input name="name" className="form-input" value={editForm.name || ''} onChange={handleEditChange} />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="form-row cols-2">
                                     <div className="form-group">
                                         <label>Type</label>
                                         <select name="type" className="form-input" value={editForm.type || 'normal'} onChange={handleEditChange}>
@@ -184,7 +184,7 @@ export default function EventDetail() {
                                         </select>
                                     </div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                                <div className="form-row cols-3">
                                     <div className="form-group">
                                         <label>Start Date</label>
                                         <input name="startDate" type="date" className="form-input" value={editForm.startDate || ''} onChange={handleEditChange} />
@@ -198,7 +198,7 @@ export default function EventDetail() {
                                         <input name="registrationDeadline" type="date" className="form-input" value={editForm.registrationDeadline || ''} onChange={handleEditChange} />
                                     </div>
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                                <div className="form-row cols-2">
                                     <div className="form-group">
                                         <label>Reg. Limit (0 = unlimited)</label>
                                         <input name="registrationLimit" type="number" className="form-input" value={editForm.registrationLimit ?? 0} onChange={handleEditChange} />
@@ -212,12 +212,12 @@ export default function EventDetail() {
                                     <label>Tags (comma-separated)</label>
                                     <input name="tags" className="form-input" value={editForm.tags || ''} onChange={handleEditChange} />
                                 </div>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 600, marginBottom: editForm.isTeamEvent ? '0.75rem' : '1rem' }}>
+                                <label className="check-label" style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: editForm.isTeamEvent ? '0.75rem' : '1rem' }}>
                                     <input type="checkbox" checked={editForm.isTeamEvent || false} onChange={(e) => setEditForm({ ...editForm, isTeamEvent: e.target.checked })} />
                                     👥 Team Event
                                 </label>
                                 {editForm.isTeamEvent && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+                                    <div className="form-row cols-2" style={{ marginBottom: '1rem' }}>
                                         <div className="form-group">
                                             <label>Min Team Size</label>
                                             <input name="minTeamSize" type="number" className="form-input" min="2" value={editForm.minTeamSize ?? 2} onChange={handleEditChange} />
@@ -237,19 +237,19 @@ export default function EventDetail() {
                             <textarea name="description" className="form-input" value={editForm.description || ''} onChange={handleEditChange} rows={3} />
                         </div>
                         {event.status === 'published' && (
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                            <div className="form-row cols-2">
                                 <div className="form-group">
-                                    <label>Reg. Deadline {event.status === 'published' && <span style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>(can only extend)</span>}</label>
+                                    <label>Reg. Deadline {event.status === 'published' && <span className="label-note">(can only extend)</span>}</label>
                                     <input name="registrationDeadline" type="date" className="form-input" value={editForm.registrationDeadline || ''} onChange={handleEditChange} />
                                 </div>
                                 <div className="form-group">
-                                    <label>Reg. Limit {event.status === 'published' && <span style={{ fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>(can only increase)</span>}</label>
+                                    <label>Reg. Limit {event.status === 'published' && <span className="label-note">(can only increase)</span>}</label>
                                     <input name="registrationLimit" type="number" className="form-input" value={editForm.registrationLimit ?? 0} onChange={handleEditChange} />
                                 </div>
                             </div>
                         )}
 
-                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                        <div className="cluster" style={{ marginTop: '0.5rem' }}>
                             <button className="btn btn-primary" onClick={handleSaveEdit}>Save Changes</button>
                             <button className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
                         </div>
@@ -257,13 +257,13 @@ export default function EventDetail() {
                 )}
 
                 {/* Stats */}
-                <div className="grid-4" style={{ marginBottom: '2rem' }}>
+                <div className="grid-4 mb-page">
                     <div className="glass-card stat-card">
                         <div className="stat-value">{event.registrationCount || 0}</div>
                         <div className="stat-label">Registrations</div>
                     </div>
                     <div className="glass-card stat-card">
-                        <div className="stat-value">₹{event.totalRevenue || 0}</div>
+                        <div className="stat-value">₹{(event.totalRevenue || 0).toLocaleString('en-IN')}</div>
                         <div className="stat-label">Revenue</div>
                     </div>
                     <div className="glass-card stat-card">
@@ -277,22 +277,22 @@ export default function EventDetail() {
                 </div>
 
                 {/* Event Info */}
-                <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                    <h3 style={{ marginBottom: '0.75rem' }}>Event Details</h3>
-                    <p style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', marginBottom: '1rem' }}>{event.description || 'No description'}</p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem', fontSize: 'var(--font-sm)' }}>
-                        <div><span style={{ color: 'var(--text-muted)' }}>📅 Start:</span> {new Date(event.startDate).toLocaleDateString()}</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>📅 End:</span> {new Date(event.endDate).toLocaleDateString()}</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>⏰ Deadline:</span> {new Date(event.registrationDeadline).toLocaleDateString()}</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>💰 Fee:</span> ₹{event.registrationFee}</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>👥 Limit:</span> {event.registrationLimit || 'Unlimited'}</div>
-                        <div><span style={{ color: 'var(--text-muted)' }}>🎯 Eligibility:</span> {event.eligibility}</div>
-                        {event.isTeamEvent && <div><span style={{ color: 'var(--text-muted)' }}>👥 Team Size:</span> {event.teamSize?.min || 2}–{event.teamSize?.max || 4} members</div>}
+                <div className="glass-card mb-section">
+                    <h3 className="card-title">Event Details</h3>
+                    <p className="text-secondary" style={{ whiteSpace: 'pre-wrap', marginBottom: '1.25rem' }}>{event.description || 'No description'}</p>
+                    <div className="info-grid">
+                        <div><span className="k">Starts</span>{new Date(event.startDate).toLocaleDateString()}</div>
+                        <div><span className="k">Ends</span>{new Date(event.endDate).toLocaleDateString()}</div>
+                        <div><span className="k">Reg. deadline</span>{new Date(event.registrationDeadline).toLocaleDateString()}</div>
+                        <div><span className="k">Fee</span>{event.registrationFee > 0 ? `₹${event.registrationFee}` : 'Free'}</div>
+                        <div><span className="k">Limit</span>{event.registrationLimit || 'Unlimited'}</div>
+                        <div><span className="k">Eligibility</span>{event.eligibility}</div>
+                        {event.isTeamEvent && <div><span className="k">Team size</span>{event.teamSize?.min || 2}–{event.teamSize?.max || 4} members</div>}
                     </div>
                 </div>
 
                 {/* Quick Links */}
-                <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                <div className="cluster mb-section" style={{ gap: '0.75rem' }}>
                     {event.type === 'merchandise' && (
                         <Link to={`/organizer/events/${id}/merch-orders`} className="btn btn-secondary btn-sm">🛍️ Merch Orders</Link>
                     )}
@@ -301,16 +301,16 @@ export default function EventDetail() {
 
                 {/* Participants Table */}
                 <div className="glass-card">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-                        <h3>Participants ({filteredParticipants.length})</h3>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                            <input className="form-input" placeholder="Search…" value={partSearch} onChange={(e) => setPartSearch(e.target.value)} style={{ width: 200 }} />
+                    <div className="page-header-row" style={{ alignItems: 'center', marginBottom: '1rem', gap: '0.75rem' }}>
+                        <h3 className="section-title" style={{ marginBottom: 0 }}>Participants <span className="count">{filteredParticipants.length}</span></h3>
+                        <div className="cluster">
+                            <input className="form-input" placeholder="Search name or email…" value={partSearch} onChange={(e) => setPartSearch(e.target.value)} style={{ width: 220, maxWidth: '100%' }} />
                             <button className="btn btn-secondary btn-sm" onClick={handleCSV}>📥 CSV</button>
                         </div>
                     </div>
 
                     {filteredParticipants.length === 0 ? (
-                        <p style={{ color: 'var(--text-muted)', fontSize: 'var(--font-sm)' }}>No participants yet</p>
+                        <p className="empty-state" style={{ padding: '2rem', fontSize: 'var(--font-sm)' }}>No participants yet</p>
                     ) : (
                         <div className="table-container">
                             <table>
@@ -326,9 +326,9 @@ export default function EventDetail() {
                                 <tbody>
                                     {filteredParticipants.map((p) => (
                                         <tr key={p._id}>
-                                            <td>{p.participant?.firstName} {p.participant?.lastName}</td>
-                                            <td>{p.participant?.email}</td>
-                                            <td style={{ fontFamily: 'monospace', fontSize: 'var(--font-xs)' }}>{p.ticketId}</td>
+                                            <td style={{ fontWeight: 600 }}>{p.participant?.firstName} {p.participant?.lastName}</td>
+                                            <td className="text-secondary">{p.participant?.email}</td>
+                                            <td className="mono">{p.ticketId}</td>
                                             <td><span className={`badge ${p.status === 'confirmed' ? 'badge-green' : 'badge-yellow'}`}>{p.status}</span></td>
                                             <td>{new Date(p.registeredAt).toLocaleDateString()}</td>
                                         </tr>

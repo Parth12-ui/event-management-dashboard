@@ -35,16 +35,16 @@ export default function OngoingEvents() {
                     <Link to="/organizer/events/create" className="btn btn-primary" style={{ marginTop: '1rem' }}>Create Event</Link>
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div className="stack">
                     {events.map((event) => (
-                        <Link key={event._id} to={`/organizer/events/${event._id}`} className="glass-card fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', textDecoration: 'none', color: 'inherit', flexWrap: 'wrap', gap: '1rem' }}>
+                        <Link key={event._id} to={`/organizer/events/${event._id}`} className="glass-card list-row fade-in">
                             <div>
-                                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                                <div className="cluster" style={{ marginBottom: '0.6rem' }}>
                                     <span className={`badge ${statusColors[event.status]}`}>{event.status}</span>
                                     <span className={`badge ${event.type === 'merchandise' ? 'badge-yellow' : 'badge-purple'}`}>{event.type}</span>
                                 </div>
-                                <h3 style={{ fontSize: 'var(--font-base)', fontWeight: 600 }}>{event.name}</h3>
-                                <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem', fontSize: 'var(--font-xs)', color: 'var(--text-muted)' }}>
+                                <h3>{event.name}</h3>
+                                <div className="meta-row">
                                     <span>👥 {event.registrationCount || 0} registrations</span>
                                     <span>📅 {new Date(event.startDate).toLocaleDateString()} - {new Date(event.endDate).toLocaleDateString()}</span>
                                 </div>

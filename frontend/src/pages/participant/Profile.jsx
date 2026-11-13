@@ -83,14 +83,14 @@ export default function Profile() {
                 <p>Manage your account and preferences</p>
             </div>
 
-            <div className="grid-2" style={{ gap: '2rem', gridTemplateColumns: '1fr 1fr' }}>
+            <div className="layout-split">
                 {/* Profile Form */}
                 <div className="glass-card">
-                    <h3 style={{ marginBottom: '1rem' }}>Personal Info</h3>
+                    <h3 className="card-title">Personal Info</h3>
 
                     {message.text && <div className={`alert alert-${message.type}`}>{message.text}</div>}
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <div className="form-row cols-2">
                         <div className="form-group">
                             <label>First Name</label>
                             <input className="form-input" value={form.firstName || ''} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
@@ -102,13 +102,13 @@ export default function Profile() {
                     </div>
 
                     <div className="form-group">
-                        <label>Email <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-xs)' }}>(non-editable)</span></label>
-                        <input className="form-input" value={form.email || ''} disabled style={{ opacity: 0.6 }} />
+                        <label>Email <span className="label-note">(non-editable)</span></label>
+                        <input className="form-input" value={form.email || ''} disabled />
                     </div>
 
                     <div className="form-group">
-                        <label>Participant Type <span style={{ color: 'var(--text-muted)', fontSize: 'var(--font-xs)' }}>(non-editable)</span></label>
-                        <input className="form-input" value={form.participantType || ''} disabled style={{ opacity: 0.6 }} />
+                        <label>Participant Type <span className="label-note">(non-editable)</span></label>
+                        <input className="form-input" value={form.participantType || ''} disabled />
                     </div>
 
                     <div className="form-group">
@@ -129,8 +129,8 @@ export default function Profile() {
                 {/* Right side */}
                 <div>
                     {/* Interests */}
-                    <div className="glass-card" style={{ marginBottom: '1.5rem' }}>
-                        <h3 style={{ marginBottom: '1rem' }}>Areas of Interest</h3>
+                    <div className="glass-card mb-section">
+                        <h3 className="card-title">Areas of Interest</h3>
                         <div className="tag-chips">
                             {interestOptions.map((interest) => (
                                 <span key={interest} className={`tag-chip ${(form.interests || []).includes(interest) ? 'selected' : ''}`} onClick={() => toggleInterest(interest)}>
@@ -142,7 +142,7 @@ export default function Profile() {
 
                     {/* Password Change */}
                     <div className="glass-card">
-                        <h3 style={{ marginBottom: '1rem' }}>Change Password</h3>
+                        <h3 className="card-title">Change Password</h3>
                         {passwordMsg.text && <div className={`alert alert-${passwordMsg.type}`}>{passwordMsg.text}</div>}
                         <form onSubmit={handlePasswordChange}>
                             <div className="form-group">

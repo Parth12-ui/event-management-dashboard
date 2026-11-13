@@ -1,0 +1,2 @@
+Frontend (VERCEL): https://dass-a1-green.vercel.app/
+Backend (RENDER): https://dass-a1-q9gh.onrender.com

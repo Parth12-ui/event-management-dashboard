@@ -25,6 +25,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// --------------- Health ---------------
+const dbState = () => ['disconnected', 'connected', 'connecting', 'disconnecting'][mongoose.connection.readyState] || 'unknown';
+
+// Health check — answers even while the database is down, so Render's
+// health check and port detection work and the problem is visible.
+app.get('/', (req, res) => {
+  res.json({ message: 'Felicity API is running', database: dbState() });
+});
+app.get('/api/health', (req, res) => {
+  const ok = mongoose.connection.readyState === 1;
+  res.status(ok ? 200 : 503).json({ status: ok ? 'ok' : 'degraded', database: dbState() });
+});
+
+// Fail fast with a clear 503 instead of hanging when the database is unavailable
+app.use('/api', (req, res, next) => {
+  if (mongoose.connection.readyState === 1) return next();
+  res.status(503).json({ message: 'Database unavailable. Please try again shortly.' });
+});
+
 // --------------- Routes ---------------
 const authRoutes = require('./routes/auth.routes');
 const participantRoutes = require('./routes/participant.routes');
@@ -44,28 +63,41 @@ app.use('/api/forum', forumRoutes);
 
 app.use('/api/feedback', feedbackRoutes);
 
-// Health check
-app.get('/', (req, res) => {
-  res.json({ message: 'Felicity API is running' });
-});
 
 // --------------- Database & Server ---------------
 const PORT = process.env.PORT || 3000;
 
 const seedAdmin = require('./utils/seedAdmin');
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(async () => {
-    console.log('Connected to MongoDB');
-    await seedAdmin();
-    server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
+// Listen first so the service is reachable even if MongoDB is down;
+// then keep retrying the database connection in the background.
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+let seeded = false;
+mongoose.connection.on('connected', async () => {
+  console.log('Connected to MongoDB');
+  if (!seeded) {
+    seeded = true;
+    try { await seedAdmin(); } catch (err) { console.error('Admin seed failed:', err.message); }
+  }
+});
+mongoose.connection.on('disconnected', () => console.warn('MongoDB disconnected'));
+
+const connectWithRetry = async (attempt = 1) => {
+  if (!process.env.MONGO_URI) {
+    console.error('MONGO_URI is not set — API routes will return 503 until it is configured.');
+    return;
+  }
+  try {
+    await mongoose.connect(process.env.MONGO_URI, { serverSelectionTimeoutMS: 10000 });
+  } catch (err) {
+    const delay = Math.min(30000, 2000 * attempt);
+    console.error(`MongoDB connection failed (attempt ${attempt}): ${err.message}. Retrying in ${delay / 1000}s`);
+    setTimeout(() => connectWithRetry(attempt + 1), delay);
+  }
+};
+connectWithRetry();
 
 module.exports = app;

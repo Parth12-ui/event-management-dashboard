@@ -162,21 +162,12 @@ npm run devStart
 > Server runs at `http://localhost:5000` (REST API + WebSocket).
 
 ### Step 3 — Frontend Setup
+The frontend now lives in its own repository, **[Parth12-ui/Felicity](https://github.com/Parth12-ui/Felicity)**.
 ```bash
-cd ../frontend
+git clone https://github.com/Parth12-ui/Felicity.git
+cd Felicity
 npm install
-```
-
-Create a `.env` file inside `frontend/`:
-```env
-VITE_API_URL=http://localhost:5000/api
-
-# Optional: reCAPTCHA site key (public)
-VITE_RECAPTCHA_SITE_KEY=your_recaptcha_site_key
-```
-
-Start the dev server:
-```bash
+echo "VITE_API_URL=http://localhost:5000/api" > .env
 npm run dev
 ```
 > Frontend runs at `http://localhost:5173`.
@@ -188,4 +179,4 @@ npm run dev
   
 ---
 
-*For deployment, the frontend is configured for **Vercel** and the backend for **Render**. Set the same environment variables in each platform's dashboard.*
+*For deployment, the frontend ([Felicity](https://github.com/Parth12-ui/Felicity)) is deployed on **Vercel** and the backend in this repo on **Render**. Set the same environment variables in each platform's dashboard.*
